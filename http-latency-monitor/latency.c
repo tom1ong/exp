@@ -34,26 +34,25 @@ int uprobe_handle_request(struct pt_regs *ctx) {
     return 0;
 }
 
-// Exit point - calculate latency
-SEC("uretprobe/handleRequest")
-int uretprobe_handle_request(struct pt_regs *ctx) {
+SEC("uprobe/handleRequest_ret")
+int uprobe_ret_handle_request(struct pt_regs *ctx) {
     __u64 pid_tgid = bpf_get_current_pid_tgid();
     __u64 *start_time;
-    
+
     start_time = bpf_map_lookup_elem(&start_times, &pid_tgid);
     if (!start_time) {
         return 0;
     }
-    
+
     __u64 end_time = bpf_ktime_get_ns();
     __u64 latency = end_time - *start_time;
-    
+
     struct latency_event event = {};
     event.pid_tgid = pid_tgid;
     event.latency_ns = latency;
-    
+
     bpf_perf_event_output(ctx, &events, BPF_F_CURRENT_CPU, &event, sizeof(event));
     bpf_map_delete_elem(&start_times, &pid_tgid);
-    
+
     return 0;
 } 

@@ -54,7 +54,7 @@ type bpfSpecs struct {
 // It can be passed ebpf.CollectionSpec.Assign.
 type bpfProgramSpecs struct {
 	UprobeHandleRequest    *ebpf.ProgramSpec `ebpf:"uprobe_handle_request"`
-	UretprobeHandleRequest *ebpf.ProgramSpec `ebpf:"uretprobe_handle_request"`
+	UprobeRetHandleRequest *ebpf.ProgramSpec `ebpf:"uprobe_ret_handle_request"`
 }
 
 // bpfMapSpecs contains maps before they are loaded into the kernel.
@@ -100,13 +100,13 @@ func (m *bpfMaps) Close() error {
 // It can be passed to loadBpfObjects or ebpf.CollectionSpec.LoadAndAssign.
 type bpfPrograms struct {
 	UprobeHandleRequest    *ebpf.Program `ebpf:"uprobe_handle_request"`
-	UretprobeHandleRequest *ebpf.Program `ebpf:"uretprobe_handle_request"`
+	UprobeRetHandleRequest *ebpf.Program `ebpf:"uprobe_ret_handle_request"`
 }
 
 func (p *bpfPrograms) Close() error {
 	return _BpfClose(
 		p.UprobeHandleRequest,
-		p.UretprobeHandleRequest,
+		p.UprobeRetHandleRequest,
 	)
 }
 

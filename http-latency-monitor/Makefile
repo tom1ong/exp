@@ -3,13 +3,13 @@
 all: generate build
 
 generate:
-	go generate monitor.go
+	go generate -tags monitor monitor.go
 
 build: generate
 	go build -o server server.go
 
 build-monitor: generate
-	go build -o monitor monitor.go bpf_bpfel_x86.go
+	go build -tags monitor -o monitor monitor.go bpf_bpfel_x86.go
 
 clean:
 	rm -f server monitor bpf_bpfel_x86.go bpf_bpfel_x86.o
@@ -22,7 +22,7 @@ run-monitor: build-monitor
 
 # Alternative: run with go using preserved PATH
 run-monitor-dev: generate
-	sudo -E env "PATH=$$PATH" go run monitor.go bpf_bpfel_x86.go
+	sudo -E env "PATH=$$PATH" go run -tags monitor monitor.go bpf_bpfel_x86.go
 
 test-request:
 	curl http://localhost:8080 
